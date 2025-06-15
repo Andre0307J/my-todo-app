@@ -1,0 +1,44 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.header {
+  background: url('../assets/images/header-bg.jpg') no-repeat center center;
+  color: white;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h1 {
+  color: white !important;
+}
+
+.header nav a {
+  color: white;
+  margin-left: 1rem;
+  text-decoration: none;
+}
+
+.active {
+  text-decoration: underline;
+}
+
+.main {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1200px;    /* Increased to match grid */
+  margin: 0 auto;       /* Center the main content */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.navLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em; /* space between icon and text */
+  vertical-align: middle;
+}
