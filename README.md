@@ -51,7 +51,7 @@ my-todo-app/
 
 ### 📋 Todo List Mobile View
 
-![Todo List](src/assets/screenshots/todo-list-mobile.png)
+![Todo List](./src/assets/screenshots/todo-list-mobile.png)
 
 ### ➕ Add Todo Modal
 
@@ -67,7 +67,7 @@ my-todo-app/
 
 ### ❌ Delete Todo
 
-![Delete Todo Modal](./src/assets/screenshots/delete-todo.png) <!-- Or your actual delete screenshot filename -->
+![Delete Todo Modal](./src/assets/screenshots/delete-todo.png)
 
 ### 🚫 404 Page
 
