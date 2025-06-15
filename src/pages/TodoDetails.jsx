@@ -1,6 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useUpdateTodo } from "../hooks/useUpdateTodo";
 import { useDeleteTodo } from "../hooks/useDeleteTodo";
 import Spinner from "../components/Spinner";
 import TodoForm from "../components/TodoForm";
@@ -33,19 +32,8 @@ export default function TodoDetails() {
     enabled: !!id,
   });
 
-  const { mutate: updateTodo } = useUpdateTodo(id);
   const { mutate: deleteTodo } = useDeleteTodo(id);
-
-  const handleEditSubmit = (updatedData) => {
-    updateTodo(updatedData, {
-      onSuccess: () => setShowEditModal(false),
-      onError: (error) => {
-        console.error("Update failed:", error);
-        alert(`Failed to update todo: ${error.message}`);
-      },
-    });
-  };
-
+  
   const handleDelete = () => {
     deleteTodo(undefined, {
       onSuccess: () => {
@@ -104,7 +92,9 @@ export default function TodoDetails() {
           </DialogHeader>
           <TodoForm
             initialData={todo}
-            onSubmit={handleEditSubmit}
+            onFormSubmitSuccess={() => {
+              setShowEditModal(false); // Close modal after TodoForm's internal success
+            }}
             onCancel={() => setShowEditModal(false)}
           />
         </DialogContent>
