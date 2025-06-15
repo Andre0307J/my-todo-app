@@ -51,7 +51,7 @@ my-todo-app/
 
 ### 📋 Todo List Mobile View
 
-![Todo List](./src/assets/screenshots/todo-list-mobile.png)
+![Todo List](/assets/screenshots/todo-list-mobile.png)
 
 ### ➕ Add Todo Modal
 
