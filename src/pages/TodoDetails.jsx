@@ -5,8 +5,8 @@ import Spinner from "../components/Spinner";
 import TodoForm from "../components/TodoForm";
 import styles from "../styles/TodoDetails.module.css";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { fetchTodo } from "../lib/todoApi"; // Use your shared API function
+import { Button } from "@/components/ui/button"; // Assuming this is your UI library
+import { getTodoById } from "../lib/todoApi"; // Use the specific function for fetching a single todo
 import {
   Dialog,
   DialogContent,
@@ -28,8 +28,15 @@ export default function TodoDetails() {
     error,
   } = useQuery({
     queryKey: ["todo", id],
-    queryFn: () => fetchTodo(id),
+    queryFn: () => getTodoById(id),
     enabled: !!id,
+    // For DummyJSON: If we have this specific todo in cache (especially new items
+    // put there by TodoForm), trust it. A refetch for a newly "added" item
+    // will likely result in a 404 from DummyJSON.
+    // staleTime: Infinity means data in cache is considered fresh indefinitely
+    // and won't be refetched unless invalidated or explicitly refetched.
+    staleTime: Infinity,
+    refetchOnWindowFocus: false, // Prevents refetch on window focus for cached new items
   });
 
   const { mutate: deleteTodo } = useDeleteTodo(id);

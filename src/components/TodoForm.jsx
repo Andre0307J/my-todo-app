@@ -47,23 +47,47 @@ export default function TodoForm({
     },
     // The `returnedTodoData` is what the `addTodo` or `updateTodo` function returns
     // after a successful API call. It should be the newly created or updated todo item.
-    onSuccess: (returnedTodoData) => {
+    // `submittedTodoData` is the object that was passed to `mutate()`.
+    onSuccess: (returnedApiData, submittedTodoData) => {
       // Manually update the TanStack Query cache to reflect the change immediately.
-      // This is crucial for mock APIs like jsonplaceholder that don't persist changes.
+      // For DummyJSON, this helps maintain UI consistency for fields it doesn't update (like text).
       queryClient.setQueryData(['todos'], (oldData) => {
         // Ensure oldData is an array, default to empty array if undefined or not an array
         const oldTodosArray = Array.isArray(oldData) ? oldData : [];
 
         if (initialId) {
           // This was an update: replace the old item with the new one
-          return oldTodosArray.map(todo =>
-            todo.id === initialId ? returnedTodoData : todo
-          );
+          const updatedItem = {
+            ...submittedTodoData, // User's intended text, completed status, userId
+            id: returnedApiData.id, // Ensure ID from API response is used
+            completed: returnedApiData.completed, // Use completed status from API response
+          };
+          return oldTodosArray.map(t => {
+            if (t.id === initialId) {
+              return updatedItem;
+            }
+            return t;
+          });
         } else {
           // This was an add: prepend the new todo to the list
-          return [returnedTodoData, ...oldTodosArray];
+          // Note: The individual cache update for 'add' is already here.
+          // queryClient.setQueryData(['todo', String(returnedApiData.id)], returnedApiData);
+              // Also, populate the cache for the individual new todo.
+              // This allows TodoDetails to find it directly from cache,
+              // mitigating issues if DummyJSON doesn't actually persist new items for GET /todos/:id.
+              queryClient.setQueryData(['todo', String(returnedApiData.id)], returnedApiData);
+          return [returnedApiData, ...oldTodosArray];
         }
       });
+
+      // If this was an update, also update the specific query cache for ['todo', id]
+      // This ensures TodoDetails, if currently viewing this item, reflects the change immediately.
+      if (initialId) {
+        const updatedItemForSingleView = {
+          ...submittedTodoData, id: returnedApiData.id, completed: returnedApiData.completed
+        };
+        queryClient.setQueryData(['todo', String(initialId)], updatedItemForSingleView);
+      }
 
       // For mock APIs that don't persist, invalidating queries right after
       // a manual update can cause the UI to revert if the server returns the original list.
@@ -93,7 +117,7 @@ export default function TodoForm({
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
-      <h3>{initialData.id ? "Edit Todo" : "Add Todo"}</h3>
+      <h3>{initialId ? "Edit Todo" : "Add Todo"}</h3>
 
       <input
         className={styles.inputField}
@@ -130,10 +154,10 @@ export default function TodoForm({
           disabled={addOrUpdateTodoMutation.isLoading}
         >
           {addOrUpdateTodoMutation.isLoading
-            ? initialData.id
+            ? initialId
               ? "Updating..."
               : "Creating..."
-            : initialData.id
+            : initialId
             ? "Update"
             : "Create"}
         </button>

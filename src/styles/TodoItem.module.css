@@ -1,51 +1,106 @@
 .card {
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  padding: 1rem;
-  margin: 0.5rem auto;      /* Center the card in its grid cell */
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  min-width: 0;
-  width: 100%;
-  max-width: 300px;         /* Prevents cards from getting too wide */
-  transition: box-shadow 0.2s, transform 0.2s;
-  word-break: break-word;
-  overflow-wrap: anywhere;
-  cursor: pointer;
-  color: #222;           /* Set your desired text color */
-  text-decoration: none; /* Remove underline */
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px; /* Slightly more rounded */
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08); /* Softer shadow */
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+  display: flex; /* For layout with actions */
+  flex-direction: column; /* Stack content and actions */
+  position: relative; /* For positioning actions or link overlay if needed */
 }
 
 .card:hover {
-  box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 1.5px 6px rgba(0,0,0,0.08);
-  transform: translateY(-8px) scale(1.03);
-  text-decoration: none;
-}
-
-.card:visited,
-.card:active,
-.card:hover {
-  color: #222;           /* Ensure color stays the same on all states */
-  text-decoration: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  /* transform: translateY(-2px); Optional: subtle lift on hover */
 }
 
 .card h3 {
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 1.2em;
 }
 
-.card a {
-  text-decoration: none;
-  color: #333;
-  font-weight: 600;
-  text-transform: capitalize;
+.card p {
+  margin: 5px 0;
+  font-size: 0.9em;
+  color: #555;
 }
 
 .flexRow {
   display: flex;
-  align-items: center;
-  gap: 0.3em; /* Adjusted gap for better spacing */
-  margin-bottom: 0.5rem; /* Add some space below the flex row */
-  margin-top: 0.8rem; /* Add some space above the flex row */
+  align-items: center; /* Vertically align icon and text */
+  gap: 8px; /* Space between icon and text */
 }
 
+.cardLink {
+  text-decoration: none;
+  color: inherit; /* Inherit color from parent */
+  display: block; /* Make the link area fill its container */
+  flex-grow: 1; /* Allow link content to take available space */
+}
+
+.todoContent {
+  /* Styles for the main content area if needed, already covered by .card p, .card h3 */
+}
+
+.completedCard {
+  background-color: #f0f9f0; /* Light green for completed items */
+  border-left: 5px solid #4caf50; /* Green accent border */
+}
+
+.completedCard h3 {
+  text-decoration: line-through;
+  color: #777;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end; /* Align buttons to the right */
+  gap: 10px; /* Space between buttons */
+  margin-top: 15px; /* Space above the action buttons */
+  padding-top: 10px; /* Padding above actions */
+  border-top: 1px solid #eee; /* Separator line */
+}
+
+.actionButton {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+  display: inline-flex; /* For icon alignment */
+  align-items: center;
+  gap: 5px;
+}
+
+.actionButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.toggleButton {
+  background-color: #2196F3; /* Blue for complete/undo */
+  color: white;
+}
+
+.toggleButton:hover:not(:disabled) {
+  background-color: #1976D2;
+}
+
+.deleteButton {
+  background-color: #f44336; /* Red for delete */
+  color: white;
+}
+
+.deleteButton:hover:not(:disabled) {
+  background-color: #d32f2f;
+}
+
+/* Ensure icons within buttons are sized appropriately */
+.actionButton svg {
+  font-size: 1em; /* Adjust if icons are too big/small */
+}

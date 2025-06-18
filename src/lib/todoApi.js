@@ -1,72 +1,122 @@
-const BASE_URL = 'https://jsonplaceholder.typicode.com/todos';
+// todoApi.js
 
-// Helper function to map API response structure to your app's expected structure
-const mapApiTodoToAppTodo = (apiTodo) => {
-  if (!apiTodo) return null; // Handle cases where apiTodo might be null or undefined
-  const { title, ...rest } = apiTodo; // Destructure to separate 'title'
-  return {
-    ...rest, // Spread other properties like id, userId, completed
-    todo: title, // Map the API's 'title' field to your app's 'todo' field
-  };
+const BASE_URL = 'https://dummyjson.com/todos';
+
+/**
+ * Fetches all todos.
+ */
+export const getAllTodos = async () => {
+  try {
+    const response = await fetch(BASE_URL);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data.todos; // DummyJSON wraps the array in a 'todos' property
+  } catch (error) {
+    console.error("Failed to fetch todos:", error);
+    throw error; // Re-throw the error to be handled by the caller
+  }
 };
 
-export async function addTodo(newTodoDataFromForm) {
-  // newTodoDataFromForm comes from your form, e.g., { todo: "Task text", completed: false, userId: 1 }
-  const res = await fetch(BASE_URL, { // POST to the base /todos endpoint
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      title: newTodoDataFromForm.todo, // Mapping app's 'todo' to API's 'title'
-      completed: newTodoDataFromForm.completed,
-      userId: newTodoDataFromForm.userId,
-    }),
-  });
-  if (!res.ok) throw new Error('Failed to add todo');
-  const addedApiTodo = await res.json(); // API returns the new todo with 'title'
-  return mapApiTodoToAppTodo(addedApiTodo); // Map it back to your app's structure
-}
+/**
+ * Fetches a single todo by its ID.
+ */
+export const getTodoById = async (id) => {
+  try {
+    const response = await fetch(`${BASE_URL}/${id}`);
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new Error(`Todo with ID ${id} not found.`);
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(`Failed to fetch todo with ID ${id}:`, error);
+    throw error;
+  }
+};
 
-export async function updateTodo(id, updatesFromForm) {
-  // updatesFromForm from the form, e.g., { todo: "Updated text", completed: true }
-  // Note: userId is not in updatesFromForm based on your TodoForm.jsx.
-  // JSONPlaceholder is usually lenient and will update fields provided, keeping others.
-  const payload = {
-    title: updatesFromForm.todo, // Map your app's 'todo' to API's 'title'
-    completed: updatesFromForm.completed,
-    // id: id, // id is in the URL, usually not needed in PUT body for jsonplaceholder
-    // userId: originalUserId // If API strictly required full resource, you'd need to fetch or pass original userId
-  };
+/**
+ * Adds a new todo.
+ */
+export const addTodo = async (todoData) => {
+  try {
+    const response = await fetch(`${BASE_URL}/add`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(todoData),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Failed to add todo:", error);
+    throw error;
+  }
+};
 
-  const res = await fetch(`${BASE_URL}/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) throw new Error('Failed to update todo');
-  const updatedApiTodo = await res.json(); // API returns the "updated" todo with 'title'
-  return mapApiTodoToAppTodo(updatedApiTodo); // Map it back to your app's structure
-}
+// Updates an existing todo. DummyJSON only supports updating the 'completed' status.
 
-export async function deleteTodo(id) {
-  const res = await fetch(`${BASE_URL}/${id}`, {
-    method: 'DELETE',
-  });
-  if (!res.ok) throw new Error('Failed to delete todo');
-  // JSONPlaceholder returns {} on successful DELETE.
-  // res.json() will parse it. TanStack Query handles cache invalidation.
-  return res.json();
-}
+export const updateTodo = async (id, updateData) => {
+  // According to DummyJSON docs, only 'completed' can be updated for todos.
+  // We'll ensure our updateData reflects this, or adjust if the API changes.
+  const payload = { completed: updateData.completed };
+  if (typeof updateData.completed === 'undefined') {
+    console.warn("UpdateTodo: 'completed' field is missing in updateData. API might not update anything.");
+  }
 
-export async function fetchTodos() {
-  const res = await fetch(BASE_URL);
-  if (!res.ok) throw new Error('Failed to fetch todos');
-  const apiTodosArray = await res.json(); // API returns a direct array of todos, each with 'title'
-  return apiTodosArray.map(mapApiTodoToAppTodo); // Map each todo in the array
-}
+  try {
+    const response = await fetch(`${BASE_URL}/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(`Failed to update todo with ID ${id}:`, error);
+    throw error;
+  }
+};
 
-export async function fetchTodo(id) {
-  const res = await fetch(`${BASE_URL}/${id}`);
-  if (!res.ok) throw new Error('Todo not found');
-  const apiTodo = await res.json(); // API returns a single todo object with 'title'
-  return mapApiTodoToAppTodo(apiTodo); // Map the single todo
-}
+/**
+ * Deletes a todo by its ID.
+ */
+export const deleteTodo = async (id) => {
+  try {
+    const response = await fetch(`${BASE_URL}/${id}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json(); // DummyJSON returns the "deleted" object
+  } catch (error) {
+    console.error(`Failed to delete todo with ID ${id}:`, error);
+    throw error;
+  }
+};
+
+// Example of fetching todos by userId, as per DummyJSON docs
+/**
+ * Fetches all todos for a specific user.
+ 
+ */
+export const getTodosByUserId = async (userId) => {
+  try {
+    const response = await fetch(`${BASE_URL}/user/${userId}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data.todos; // DummyJSON wraps the array in a 'todos' property
+  } catch (error) {
+    console.error(`Failed to fetch todos for user ID ${userId}:`, error);
+    throw error;
+  }
+};

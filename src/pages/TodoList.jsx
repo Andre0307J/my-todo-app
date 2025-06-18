@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchTodos } from "../lib/todoApi";
+import { getAllTodos } from "../lib/todoApi"; // Changed from fetchTodos
 import { getCache, setCache } from "../lib/cache";
 import {
   Dialog,
@@ -23,6 +23,8 @@ export default function TodoList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [showAddModal, setShowAddModal] = useState(false);
 
+  const cachedTodos = getCache("todos");
+
   const {
     data: todos,
     isLoading,
@@ -30,9 +32,16 @@ export default function TodoList() {
     error,
   } = useQuery({
     queryKey: ["todos"],
-    queryFn: fetchTodos,
-    initialData: getCache("todos"),
+    queryFn: getAllTodos, // Use the new API function for DummyJSON
+    // Only use initialData if the cache is populated with a non-empty array.
+    // If cache is empty (e.g. getCache("todos") returns [] or undefined),
+    // initialData will be undefined, forcing getAllTodos to run.
+    initialData: cachedTodos && cachedTodos.length > 0 ? cachedTodos : undefined,
     onSuccess: (data) => setCache("todos", data),
+    // For DummyJSON, make optimistic updates to the list "stick" longer
+    // by preventing immediate refetches that would revert non-persisted changes.
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
   });
 
   const filteredTodos = useMemo(() => {

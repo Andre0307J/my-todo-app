@@ -1,32 +1,43 @@
-// Likely path: src/hooks/useDeleteTodo.js
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteTodo as apiDeleteTodo } from "../lib/todoApi"; // Your API function
+import { deleteTodo as apiDeleteTodo } from "../lib/todoApi"; // Import the API function
 
-// The 'id' here is the ID of the todo to be deleted,
-// passed when the hook is initialized in TodoDetails.jsx: useDeleteTodo(id)
-export function useDeleteTodo(idToDelete) {
+export const useDeleteTodo = (todoIdToDelete) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    // The mutationFn calls the actual API delete function
-    mutationFn: () => apiDeleteTodo(idToDelete),
-    onSuccess: () => {
-      // This is where the cache is updated for the 'todos' list
-      queryClient.setQueryData(['todos'], (oldData) => {
-        // IMPORTANT FIX: Ensure oldData is an array before filtering
-        // If oldData is undefined or not an array, default to an empty array
-        const oldTodosArray = Array.isArray(oldData) ? oldData : [];
+    // The mutationFn is responsible for making the API call.
+    // It uses the `todoIdToDelete` that was passed when the hook was initialized.
+    mutationFn: () => apiDeleteTodo(todoIdToDelete),
 
-        // Filter out the todo that was just deleted
-        return oldTodosArray.filter((todo) => todo.id !== idToDelete);
+    // `onSuccess` is called after the mutationFn successfully completes.
+    // `dataFromApi` is the response from `apiDeleteTodo` (the "deleted" todo object from DummyJSON).
+    onSuccess: (dataFromApi) => {
+      console.log("Todo successfully deleted via API:", dataFromApi);
+
+      // --- Cache Management ---
+      // It's good practice to update the cache after a successful mutation
+      // to keep the UI in sync without necessarily waiting for a full refetch.
+
+      // Option 1: Manually update the 'todos' list query cache.
+      // This provides an immediate UI update by filtering out the deleted todo.
+      queryClient.setQueryData(['todos'], (oldData) => {
+        const oldTodosArray = Array.isArray(oldData) ? oldData : [];
+        return oldTodosArray.filter(todo => todo.id !== todoIdToDelete);
       });
-      // Note: The onSuccess passed from TodoDetails (e.g., to navigate)
-      // will be handled by TanStack Query after this internal onSuccess.
+
+      // Option 2: Invalidate queries to trigger refetches.
+      // This is simpler but might involve more network requests if not managed carefully.
+      // queryClient.invalidateQueries({ queryKey: ['todos'] });
+
+      // Remove the specific todo query from the cache if it exists (e.g., for a details view).
+      queryClient.removeQueries({ queryKey: ['todo', todoIdToDelete] });
+
+      // Note: The `onSuccess` callback provided to `mutate` in the component
+      // (e.g., in TodoDetails.jsx for navigation) will be called *after* this.
     },
     onError: (error) => {
-      // Handle or log the error appropriately
-      console.error("Deletion failed in useDeleteTodo:", error);
-      // We might re-throw or let the component's onError handle UI alerts
+      console.error(`Error deleting todo with ID ${todoIdToDelete} from useDeleteTodo hook:`, error);
+      // The `onError` callback provided to `mutate` in the component will also be called.
     },
   });
-}
+};
