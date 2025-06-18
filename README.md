@@ -96,7 +96,7 @@ npm run build
 
 ### 📡 API Used: [DummyJSON](https://dummyjson.com/)
 
-The [DummyJSON](https://dummyjson.com/) API, a mock API for testing purposes, was used in this project for its data structure, support and persistent mutations for `POST`, `PUT`, and `DELETE` operations on todos.
+The [DummyJSON](https://dummyjson.com/) API, a **free MOCK** API for testing purposes, was used in this project for its data structure, support and persistent mutations for `POST`, `PUT`, and `DELETE` operations on todos.
 
 ### ✅ API Features Used
 
@@ -151,6 +151,9 @@ Custom hooks like `useUpdateTodo`, `useDeleteTodo`, and query keys like `["todos
 - The Add Todo button was initially aligned to the left due to the flex-direction column in the filter section.
 - ✅ **Resolution**: Button was moved into a separate wrapper section styled with `justify-content: center`.
 
-###
+### 9. New todos are created but can't be updated or deleted
+- The DummyJSON API always one to create a new todo but won't allow one to either edit it or delete it. It was really impossible for such operations to be carried out. Several attempts to perform usch always led to an error 404 because the new todo **is not** actually saved on the API.
+- ✅ **Resolution** From the DummyJSON API documentation, only the the todos which already exist on the mock API can be either edited or deleted. There's no room for such operations to be carried out on the newly created todo since the new todo isn't actually saved on the API. So we go with how the rules are written by only updating/deleting the already created todos found within the API.
 
+###
 ---
