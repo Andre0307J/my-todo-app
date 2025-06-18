@@ -94,9 +94,9 @@ npm run build
 
 ## 🛠 API Integration
 
-### 📡 API Used: [JSONPlaceholder](https://jsonplaceholder.typicode.com/)
+### 📡 API Used: [DummyJSON](https://dummyjson.com/)
 
-The [JSONPlaceholder](https://jsonplaceholder.typicode.com/) API, a mock API for testing purposes, was used in this project for its data structure and support for `POST`, `PUT`, and `DELETE` operations on todos.
+The [DummyJSON](https://dummyjson.com/) API, a mock API for testing purposes, was used in this project for its data structure, support and persistent mutations for `POST`, `PUT`, and `DELETE` operations on todos.
 
 ### ✅ API Features Used
 
