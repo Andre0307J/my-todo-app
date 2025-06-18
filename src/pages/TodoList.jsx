@@ -15,6 +15,7 @@ import TodoForm from "../components/TodoForm";
 import Spinner from "../components/Spinner";
 import styles from "../styles/TodoList.module.css";
 
+// Items per page for pagination
 const ITEMS_PER_PAGE = 10;
 
 export default function TodoList() {
