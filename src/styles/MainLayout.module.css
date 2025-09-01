@@ -2,6 +2,10 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .header {
@@ -30,9 +34,6 @@
 .main {
   flex: 1;
   padding: 2rem;
-  max-width: 1200px;    /* Increased to match grid */
-  margin: 0 auto;       /* Center the main content */
-  width: 100%;
   box-sizing: border-box;
 }
 
