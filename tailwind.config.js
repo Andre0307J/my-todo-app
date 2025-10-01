@@ -1,11 +1,13 @@
 /** @type {import('tailwindcss').Config} */
-export default {
-    darkMode: ["class"],
-    content: [
-    "./src/**/*.{js,jsx,ts,tsx}",
-    "./public/index.html"
+module.exports = {
+  darkMode: ["class"],
+  content: [
+    "./src/pages/**/*.{js,jsx,ts,tsx,mdx}",
+    "./src/components/**/*.{js,jsx,ts,tsx,mdx}",
+    "./src/app/**/*.{js,jsx,ts,tsx,mdx}",
   ],
   theme: {
+    container: {}, // This is often needed for shadcn/ui
   	extend: {
   		borderRadius: {
   			lg: 'var(--radius)',

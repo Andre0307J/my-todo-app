@@ -1,10 +1,9 @@
-# 📝 React Todo List App
+# 📝 Next.js Todo List App
 
 This is a fully functional, accessible, and responsive Todo List app built with:
 
-- ✅ React + React Router v7
+- ✅ Next.js 14 + React
 - ✅ TanStack Query (React Query)
-- ✅ CSS Modules for styling
 - ✅ Tailwind (via ShadCN UI for modals & buttons)
 - ✅ DummyJSON API
 
@@ -23,23 +22,19 @@ This is a fully functional, accessible, and responsive Todo List app built with:
 
 ---
 
-## Project Folder Review
+## 📂 Project Structure (Next.js)
 
-my-todo-app/
-├── public/ (favicons, index.html, etc.)
+my-todo-app-nextjs/
+├── public/ (static assets like favicons)
 ├── src/
-│ ├── assets/ (404.png, screenshots)
-│ ├── components/ (TodoItem, TodoForm, Spinner, UI dialog)
-│ ├── hooks/ (useUpdateTodo, useDeleteTodo, etc.)
-│ ├── lib/
-│ │ ├── todoApi.js (fetch functions)
-│ │ ├── cache.js (getCache, setCache utilities)
-│ ├── pages/ (TodoList.jsx, TodoDetail.jsx, NotFound.jsx)
-│ ├── styles/ (all .module.css files like TodoList.module.css)
-│ ├── App.jsx  
-│ ├── main.jsx (ReactDOM.createRoot / RouterProvider setup)
-├── tailwind.config.js  
-├── postcss.config.js  
+│ ├── app/ (App Router pages, layouts, etc.)
+│ │   ├── todos/
+│ │   │   └── page.tsx
+│ │   └── layout.tsx
+│ │   └── page.tsx
+│ ├── components/ (UI components)
+│ ├── lib/ (API functions, utilities)
+├── next.config.mjs
 ├── package.json  
 └── README.md (instructions, features, screenshots)
 
@@ -81,8 +76,8 @@ my-todo-app/
 ```bash
 git clone https://github.com/your-username/my-todo-app.git
 cd todo-app
-npm install
-npm run dev
+npm install # or yarn install, pnpm install
+npm run dev # or yarn dev, pnpm dev
 ```
 ---
 
@@ -121,13 +116,13 @@ Custom hooks like `useUpdateTodo`, `useDeleteTodo`, and query keys like `["todos
 
 ### 1. Tailwind CSS Integration Issues
 - Initially encountered failure while running `npx tailwindcss init -p`, and even after manually creating `tailwind.config.js` and `postcss.config.js`, styles like `bg-blue-500` did not apply.
-- ✅ **Resolution**: A new React project was created with Tailwind installed cleanly. Tailwind was verified to work, but the team ultimately decided to use **CSS Modules** for layout styling and **ShadCN/UI** components selectively.
+- ✅ **Resolution**: The project was fully migrated to use **Tailwind CSS** for all layout and component styling, integrated with `shadcn/ui`. This resolved initial setup issues and provided a consistent design system.
 
 ### 2. ShadCN/UI Integration Errors
 - ShadCN buttons and dialogs failed due to missing the utility function `cn()` and unresolved alias `@/lib/utils`.
-- ✅ **Resolution**: A `lib/utils.js` file was created containing the `cn()` helper using `clsx` and `tailwind-merge`. The alias was fixed in `vite.config.js` by configuring `@` to point to `src`.
+- ✅ **Resolution**: A `lib/utils.ts` file was created containing the `cn()` helper using `clsx` and `tailwind-merge`. The path alias was correctly configured in `tsconfig.json` to point `@` to the `src` directory.
 
-### 3. Missing or Disappearing UI Elements
+### 3. UI Element and Layout Issues
 - The **Add Todo** button disappeared after adding filters and search due to an undefined state variable (`setShowAddModal`).
 - ✅ **Resolution**: The missing state and modal logic were restored, and the button was moved to its own wrapper section for better layout and visibility.
 
@@ -143,17 +138,12 @@ Custom hooks like `useUpdateTodo`, `useDeleteTodo`, and query keys like `["todos
 - An error occurred when `filteredTodos` became undefined during filtering, causing the app to crash.
 - ✅ **Resolution**: Added safe fallback handling (`todos ?? []`) and validated state updates to ensure pagination worked alongside filters.
 
-### 7. Styling Conflicts with CSS Modules and ShadCN
-- Conflict emerged between Tailwind-based ShadCN styles and CSS Modules, especially when overriding spacing and layout.
-- ✅ **Resolution**: Continued using **CSS Modules** for all layout and visual styling, while using ShadCN **only for interactive UI components** like `Button` and `Dialog`.
+### 7. Search and Pagination Logic
+- Searching for an item on a different page did not navigate to the correct page.
+- ✅ **Resolution**: The data fetching logic in `lib/api.ts` was optimized to use the API's fast search endpoint. The client-side logic was updated to correctly calculate the destination page and navigate, greatly improving performance and user experience.
 
-### 8. Centering the Add Todo Button
-- The Add Todo button was initially aligned to the left due to the flex-direction column in the filter section.
-- ✅ **Resolution**: Button was moved into a separate wrapper section styled with `justify-content: center`.
-
-### 9. New todos are created but can't be updated or deleted
+### 8. New todos are created but can't be updated or deleted
 - The DummyJSON API always one to create a new todo but won't allow one to either edit it or delete it. It was really impossible for such operations to be carried out. Several attempts to perform usch always led to an error 404 because the new todo **is not** actually saved on the API.
 - ✅ **Resolution** From the DummyJSON API documentation, only the the todos which already exist on the mock API can be either edited or deleted. There's no room for such operations to be carried out on the newly created todo since the new todo isn't actually saved on the API. So we go with how the rules are written by only updating/deleting the already created todos found within the API.
 
-###
 ---
