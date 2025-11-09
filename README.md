@@ -121,7 +121,7 @@ Custom hooks like `useUpdateTodo`, `useDeleteTodo`, and query keys like `["todos
 
 ### 1. Tailwind CSS Integration Issues
 - Initially encountered failure while running `npx tailwindcss init -p`, and even after manually creating `tailwind.config.js` and `postcss.config.js`, styles like `bg-blue-500` did not apply.
-- ✅ **Resolution**: A new React project was created with Tailwind installed cleanly. Tailwind was verified to work, but the team ultimately decided to use **CSS Modules** for layout styling and **ShadCN/UI** components selectively.
+- ✅ **Resolution**: A new React project was created with Tailwind installed cleanly. Tailwind was verified to work, but I ultimately decided to use **CSS Modules** for layout styling and **ShadCN/UI** components selectively.
 
 ### 2. ShadCN/UI Integration Errors
 - ShadCN buttons and dialogs failed due to missing the utility function `cn()` and unresolved alias `@/lib/utils`.
